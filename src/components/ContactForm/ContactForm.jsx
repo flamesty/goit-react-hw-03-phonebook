@@ -22,6 +22,7 @@ class ContactForm extends Component {
     this.setState({ name: '', number: '' });
   };
 
+
   render() {
     const { name, number } = this.state;
     return (
@@ -41,11 +42,11 @@ class ContactForm extends Component {
           Number
           <input
             className={s.input}
-            type="tell"
+            type="text"
             name="number"
             value={number}
             onChange={this.handleChange}
-            placeholder="Number"
+            placeholder="123456789"
           />
         </label>
         <button className={s.btn} type="submit">

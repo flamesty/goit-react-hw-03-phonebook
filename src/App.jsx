@@ -1,7 +1,5 @@
 import { Component } from 'react';
 import shortid from 'shortid';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Container from './components/Container/Container';
 import ContactForm from './components/ContactForm/ContactForm';
 import Filter from './components/Filter/Filter';
@@ -18,21 +16,18 @@ class App extends Component {
     filter: '',
   };
 
+ 
   componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
+    const contacts = localStorage.getItem("contacts");
     const parsedContacts = JSON.parse(contacts);
-
     if (parsedContacts) {
       this.setState({ contacts: parsedContacts });
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const nextContacts = this.state.contacts;
-    const prevContacts = prevState.contacts;
-
-    if (nextContacts !== prevContacts) {
-      localStorage.setItem('contacts', JSON.stringify(nextContacts));
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
     }
   }
 
@@ -42,34 +37,12 @@ class App extends Component {
       name,
       number,
     };
-    const { contacts } = this.state;
-    if (
-      contacts.find(
-        contact => contact.name.toLowerCase() === name.toLowerCase(),
-      )
-    ) {
-      toast(`🤔 ${name} is already in contacts.`);
-    } else if (contacts.find(contact => contact.number === number)) {
-      toast(`🤔 ${number} is already in contacts.`);
-    } else if (name.trim() === '' || number.trim() === '') {
-      toast.info("😱 Enter the contact's name and number phone!");
-    } else if (!/\d{3}[-]\d{2}[-]\d{2}/g.test(number)) {
-      toast.error('💩 Enter the correct number phone!');
-    } else {
-      this.setState(({ contacts }) => ({
-        contacts: [contact, ...contacts].sort((a, b) => {
-          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-          if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-          return 0;
-        }),
-      }));
-    }
 
-    // this.state.contacts.some(i => i.name === contact.name)
-    //   ? toast(`${name} is already in contacts`)
-    //   : this.setState(({ contacts }) => ({
-    //     contacts: [contact, ...contacts],
-    //   }));
+    this.state.contacts.some(i => i.name === contact.name)
+      ? alert(`${name} is already in contacts`)
+      : this.setState(({ contacts }) => ({
+        contacts: [contact, ...contacts],
+      }));
   };
 
   deleteContact = contactId => {
@@ -110,7 +83,6 @@ class App extends Component {
         ) : (
           <p>Your phonebook is empty. Please add contact.</p>
         )}
-        <ToastContainer autoClose={3700} />
       </Container>
     );
   }
