@@ -1,9 +1,9 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import shortid from 'shortid';
 import Container from './components/Container/Container';
 import ContactForm from './components/ContactForm/ContactForm';
-import Filter from './components/Filter/Filter';
 import ContactList from './components/ContactList/ContactList';
+import Filter from './components/Filter/Filter';
 
 class App extends Component {
   state = {
@@ -16,7 +16,6 @@ class App extends Component {
     filter: '',
   };
 
- 
   componentDidMount() {
     const contacts = localStorage.getItem("contacts");
     const parsedContacts = JSON.parse(contacts);
@@ -31,23 +30,22 @@ class App extends Component {
     }
   }
 
-  addContact = ({ name, number }) => {
-    const contact = {
+  addContact = ({name, number}) => {
+    const { contacts } = this.state;
+    const entry = {
       id: shortid.generate(),
       name,
       number,
     };
 
-    this.state.contacts.some(i => i.name === contact.name)
-      ? alert(`${name} is already in contacts`)
-      : this.setState(({ contacts }) => ({
-        contacts: [contact, ...contacts],
-      }));
-  };
+    if (contacts.some(contact => contact.name === name)) {
+      alert(`${name} already in the contacts.`);
+      return;
+    }
 
-  deleteContact = contactId => {
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter(contact => contact.id !== contactId),
+    this.setState(prevState => ({
+      ...prevState,
+      contacts: [entry, ...prevState.contacts],
     }));
   };
 
@@ -55,13 +53,20 @@ class App extends Component {
     this.setState({ filter: e.currentTarget.value });
   };
 
-  getVisibleContacts = () => {
-    const { contacts, filter } = this.state;
-    const normalizedFilter = filter.toLowerCase();
+  deleteContact = (contactId) => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId)
+    }));
+  };
 
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter),
-    );
+  getVisibleContacts = () => {
+    const { filter, contacts } = this.state;
+    const regExp = new RegExp(filter, 'gi');
+
+    if (filter) {
+      return contacts.filter(contact => regExp.test(contact.name));
+    }
+    return contacts;
   };
 
   render() {
